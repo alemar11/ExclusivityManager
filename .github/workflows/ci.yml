@@ -1,0 +1,35 @@
+name: "ExclusivityManager CI"
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  info:
+    name: Show macOS and Xcode versions
+    runs-on: macOS-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_11.1.app/Contents/Developer
+    steps:
+      - name: stats
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcodebuild -showsdks
+          xcrun simctl list
+  spm:
+    name: Test SPM Integration
+    runs-on: macOS-latest
+    needs: [macOS]
+    steps:
+      - uses: actions/checkout@v1
+      - name: SPM Test
+        run: |
+          swift --version
+          swift test
